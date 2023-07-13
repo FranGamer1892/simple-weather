@@ -1,6 +1,6 @@
 # Simple Weather
 
-A very simple weather app made with Rust and GTK4. Do not forget to set the API KEY under src/window.rs before compiling! (Pro tip: just open the project in [GNOME Builder](https://developer.gnome.org/documentation/introduction/builder.html))
+A very simple weather app made with Rust and GTK4. Do not forget to set the API KEY under src/window.rs before compiling! (Pro tip for building: just open the project in [GNOME Builder](https://developer.gnome.org/documentation/introduction/builder.html))
 
 ## How does it work?
 
