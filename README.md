@@ -16,6 +16,11 @@ Basically, the program fetches your public IP address, determines your approxima
 
 ## License
 
-Simple Weather has a GPL-3.0 license, as found in the [COPYING](COPYING) file.
+Copyright (C) 2023 Francisco Zadikian
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
 Logo taken from the less simple [Weather app from GNOME](https://gitlab.gnome.org/GNOME/gnome-weather/).
