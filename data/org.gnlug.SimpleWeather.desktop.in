@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Simple Weather
+Exec=simple-weather
+Icon=org.gnlug.SimpleWeather
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true

@@ -1,0 +1,4 @@
+data/org.gnlug.SimpleWeather.desktop.in
+data/org.gnlug.SimpleWeather.appdata.xml.in
+data/org.gnlug.SimpleWeather.gschema.xml
+src/window.ui
