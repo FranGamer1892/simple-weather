@@ -8,11 +8,9 @@ Basically, the program fetches your public IP address, determines your approxima
 
 ## Screenshots
 
-![screenshot-dark-1](https://github.com/FranGamer1892/simple-weather/assets/13150712/eb6726fa-9b42-4ece-a17d-1b8ae60905e0)
-![screenshot-dark-2](https://github.com/FranGamer1892/simple-weather/assets/13150712/19bb1bf5-e3ed-4190-91eb-181d66f071ad)
+![screenshot 1](https://github.com/FranGamer1892/simple-weather/assets/13150712/6d4a1906-6298-416a-a216-56e095c6431b)
 
-![screenshot-light-1](https://github.com/FranGamer1892/simple-weather/assets/13150712/861c0d4c-be85-48b7-997f-c167f55b3fa5)
-![screenshot-light-2](https://github.com/FranGamer1892/simple-weather/assets/13150712/97da141b-3bbe-498d-8d8e-038205b0bff6)
+![screenshot 2](https://github.com/FranGamer1892/simple-weather/assets/13150712/2312391f-9901-4606-8d1a-d082a9d4347b)
 
 ## License
 
