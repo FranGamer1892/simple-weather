@@ -31,6 +31,8 @@ use std::sync::Arc;
 use std::os::unix::process::CommandExt;
 use std::process::Command;
 
+use titlecase::titlecase;
+
 static mut COORDINATES: Option<Arc<Mutex<Option<[f64; 2]>>>> = None;
 
 pub fn set_coordinates(coordinates: Arc<Mutex<Option<[f64; 2]>>>) {
@@ -51,13 +53,12 @@ pub fn get_coordinates() -> Option<[f64; 2]> {
 struct WeatherInfo {
     location: String,
     country: String,
+    weather_description: String,
     temperature: f64,
-    feels_like: f64,
     humidity: u64,
     pressure: f64,
-    wind_direction: String,
+    wind_cardinal_direction: String,
     wind_speed: f64,
-    gusts: f64,
 }
 
 mod imp {
@@ -107,12 +108,11 @@ mod imp {
                         Ok(weather_info) => {
                             let mut full_string = String::new();
                             full_string.push_str(&format!("Location: {}, {}\n", weather_info.location, weather_info.country));
+                            full_string.push_str(&format!("Description: {}\n", weather_info.weather_description));
                             full_string.push_str(&format!("Current temperature: {}°C\n", weather_info.temperature));
-                            full_string.push_str(&format!("Feels like: {}°C\n", weather_info.feels_like));
                             full_string.push_str(&format!("Humidity: {}%\n", weather_info.humidity));
                             full_string.push_str(&format!("Air pressure: {} kPa\n", weather_info.pressure));
-                            full_string.push_str(&format!("Wind: {} {} km/h\n", weather_info.wind_direction, weather_info.wind_speed));
-                            full_string.push_str(&format!("Gusts: {} km/h", weather_info.gusts));
+                            full_string.push_str(&format!("Wind: {} {} km/h", weather_info.wind_cardinal_direction, weather_info.wind_speed));
 
                             self.label2.set_text(full_string.as_str());
                         }
@@ -139,9 +139,16 @@ impl SimpleWeatherWindow {
     }
 }
 
+fn deg_to_cardinal(wind_direction: f64) -> String {
+    let directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"];
+
+    let index = ((wind_direction + 22.5) / 45.0).floor() as usize % 8;
+    directions[index].to_string()
+}
+
 fn fetch_weather(latitude: f64, longitude: f64) -> Result<WeatherInfo, Box<dyn Error>> {
     let url = format!(
-        "https://api.weatherapi.com/v1/current.json?key=YOUR_API_KEY_HERE&q={},{}",
+        "https://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&units=metric&appid={API_key}",
         latitude, longitude
     );
 
@@ -149,27 +156,35 @@ fn fetch_weather(latitude: f64, longitude: f64) -> Result<WeatherInfo, Box<dyn E
     let weather_data: Value = serde_json::from_str(&response)?;
 
     // Extract the relevant weather information from the JSON response
-    let location = weather_data["location"]["name"].as_str().unwrap().to_owned();
-    let country = weather_data["location"]["country"].as_str().unwrap().to_owned();
-    let temperature = weather_data["current"]["temp_c"].as_f64().unwrap();
-    let feels_like = weather_data["current"]["feelslike_c"].as_f64().unwrap();
-    let humidity = weather_data["current"]["humidity"].as_u64().unwrap();
-    let pressure = weather_data["current"]["pressure_mb"].as_f64().unwrap() / 10.0;
-    let wind_direction = weather_data["current"]["wind_dir"].as_str().unwrap().to_owned();
-    let wind_speed = weather_data["current"]["wind_kph"].as_f64().unwrap();
-    let gusts = weather_data["current"]["gust_kph"].as_f64().unwrap();
+    let location = weather_data["name"].as_str().unwrap().to_owned();
+    let country = weather_data["sys"]["country"].as_str().unwrap().to_owned();
+    let weather_description = match weather_data["weather"][0]["description"].as_str() {
+        Some(desc) => {
+            let capitalized_desc = titlecase(desc);
+            capitalized_desc
+        }
+        None => {
+            eprintln!("Warning: Weather description not available");
+            String::new()
+        }
+    };
+    let temperature = (weather_data["main"]["temp"].as_f64().unwrap() * 10.0).round() / 10.0;
+    let humidity = weather_data["main"]["humidity"].as_u64().unwrap();
+    let pressure = weather_data["main"]["pressure"].as_f64().unwrap() / 10.0;
+    let wind_direction_deg = weather_data["wind"]["deg"].as_f64().unwrap();
+    let wind_cardinal_direction = deg_to_cardinal(wind_direction_deg);
+    let wind_speed = (weather_data["wind"]["speed"].as_f64().unwrap() * 3.6 * 10.0).round() / 10.0;
 
     // Create and return the WeatherInfo struct
     let weather_info = WeatherInfo {
         location,
         country,
         temperature,
-        feels_like,
+        weather_description,
         humidity,
         pressure,
-        wind_direction,
+        wind_cardinal_direction,
         wind_speed,
-        gusts,
     };
 
     Ok(weather_info)
